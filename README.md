@@ -24,4 +24,5 @@ run this command on your machine inside the backend folder:
     uvicorn app:app --reload
 
 (**)
+**
 
