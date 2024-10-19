@@ -20,6 +20,7 @@ DB_CONFIG = {
 class EmergencyContact(BaseModel):
     name: str
     phone: str
+    relationship: str
 
 # Model for medical information
 class MedicalInfo(BaseModel):

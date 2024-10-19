@@ -24,4 +24,14 @@ run this command on your machine inside the backend folder:
     uvicorn app:app --reload
 
 
+To open the frontend, you need expo.
+npm -v
+
+Download the latest node.js and run npm install -g npm@latest
+
+
+
+then: 
+    npx expo start --tunnel
+it will prompt you to install ngrok. click yes.
 
