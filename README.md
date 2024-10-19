@@ -15,7 +15,7 @@ setup
 linux:
     pip install fastapi
     pip install uvicorn
-    sudo apt instal net-tools
+    sudo apt install net-tools
 
     sudo npm install -g expo-cli
 
