@@ -18,10 +18,12 @@ linux:
     sudo apt install net-tools 
     sudo npm install -g expo-cli
 
-mac
+mac:
 
 pip install fastapi
 pip install uvicorn
+pip install psycopg2-binary
+
 
 run this command on your machine inside the backend folder:
     uvicorn app:app --reload
