@@ -25,6 +25,6 @@ class Patient(BaseModel):
 # Model for dispatch requests
 class DispatchRequest(BaseModel):
     patient_id: UUID
-    emergency_type: str
+    emergency_type: List[str] #can have a combination of police, ambulance, fire
     location: str
     additional_info: Optional[str] = None
