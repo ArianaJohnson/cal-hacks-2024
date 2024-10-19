@@ -3,10 +3,10 @@ from pydantic import BaseModel
 from typing import List, Optional
 from uuid  import UUID
 
+# Model for emergency contact information
 class EmergencyContact(BaseModel):
     name: str
     phone: str
-    relationship: str
 
 # Model for medical information
 class MedicalInfo(BaseModel):
@@ -22,6 +22,7 @@ class Patient(BaseModel):
     emergency_contact: EmergencyContact
     medical_info: MedicalInfo
 
+# Model for dispatch requests
 class DispatchRequest(BaseModel):
     patient_id: UUID
     emergency_type: str

@@ -1,39 +1,59 @@
-
 from fastapi import FastAPI, HTTPException
-# import mysql.connecter
-# from mysql.connector import Error
-from uuid import uuid4
-from models import *
-
+from pydantic import BaseModel
+from typing import List, Optional
+from uuid import uuid4, UUID
+import psycopg2
+from psycopg2 import sql, Error
 
 app = FastAPI()
 
 # Database connection settings
 DB_CONFIG = {
-    "host": "your_singlestore_host",
+    "host": "your_postgres_host",
+    "database": "medical_info_db",
     "user": "your_username",
     "password": "your_password",
-    "database": "your_database"
 }
 
 # Model for emergency contact information
+class EmergencyContact(BaseModel):
+    name: str
+    phone: str
 
-# Get single store database
+# Model for medical information
+class MedicalInfo(BaseModel):
+    medical_conditions: List[str]
+    allergies: Optional[List[str]] = None
+    medications: Optional[List[str]] = None
+
+# Model for a patient
+class Patient(BaseModel):
+    id: UUID
+    name: str
+    age: int
+    emergency_contact: EmergencyContact
+    medical_info: MedicalInfo
+
+# Model for dispatch requests
+class DispatchRequest(BaseModel):
+    patient_id: UUID
+    emergency_type: str
+    location: str
+    additional_info: Optional[str] = None
+
+# Helper function to get a database connection
 def get_db_connection():
-    connection = mysql.connector.connect(**DB_CONFIG)
-    return connection
+    return psycopg2.connect(**DB_CONFIG)
 
-
-#API post to create a paitnet
 @app.post("/patients/", response_model=Patient)
 async def create_patient(patient: Patient):
-    patient.id = uuid4()
     query = """
     INSERT INTO patients (id, name, age, emergency_contact, medical_conditions, allergies, medications)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
+    RETURNING id
     """
     params = (
-        str(patient.id),
+        str(uuid4()),  # Generate new UUID
         patient.name,
         patient.age,
         f"{patient.emergency_contact.name};{patient.emergency_contact.phone}",
@@ -41,43 +61,65 @@ async def create_patient(patient: Patient):
         ', '.join(patient.medical_info.allergies) if patient.medical_info.allergies else None,
         ', '.join(patient.medical_info.medications) if patient.medical_info.medications else None
     )
+
     try:
         with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query, params)
-            conn.commit()
-            return patient
+            with conn.cursor() as cursor:
+                cursor.execute(query, params)
+                patient.id = params[0]  # Assign generated UUID
+                conn.commit()
+                return patient
     except Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#Getapitent
 @app.get("/patients/{patient_id}", response_model=Patient)
 async def get_patient(patient_id: UUID):
     query = "SELECT * FROM patients WHERE id = %s"
     try:
         with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query, (str(patient_id),))
-            row = cursor.fetchone()
-            if row is None:
-                raise HTTPException(status_code=404, detail="Patient not found")
-            return Patient(
-                id=row[0],
-                name=row[1],
-                age=row[2],
-                emergency_contact=EmergencyContact(*row[3].split(';')),
-                medical_info=MedicalInfo(
-                    medical_conditions=row[4].split(', '),
-                    allergies=row[5].split(', ') if row[5] else None,
-                    medications=row[6].split(', ') if row[6] else None
+            with conn.cursor() as cursor:
+                cursor.execute(query, (str(patient_id),))
+                row = cursor.fetchone()
+                if row is None:
+                    raise HTTPException(status_code=404, detail="Patient not found")
+                return Patient(
+                    id=row[0],
+                    name=row[1],
+                    age=row[2],
+                    emergency_contact=EmergencyContact(*row[3].split(';')),
+                    medical_info=MedicalInfo(
+                        medical_conditions=row[4].split(', '),
+                        allergies=row[5].split(', ') if row[5] else None,
+                        medications=row[6].split(', ') if row[6] else None
+                    )
                 )
-            )
     except Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/patients/", response_model=List[Patient])
+async def get_all_patients():
+    query = "SELECT * FROM patients"
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                return [
+                    Patient(
+                        id=row[0],
+                        name=row[1],
+                        age=row[2],
+                        emergency_contact=EmergencyContact(*row[3].split(';')),
+                        medical_info=MedicalInfo(
+                            medical_conditions=row[4].split(', '),
+                            allergies=row[5].split(', ') if row[5] else None,
+                            medications=row[6].split(', ') if row[6] else None
+                        )
+                    ) for row in rows
+                ]
+    except Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-
-#Updates to the paitent informaiton
 @app.put("/patients/{patient_id}", response_model=Patient)
 async def update_patient(patient_id: UUID, updated_patient: Patient):
     query = """
@@ -97,42 +139,36 @@ async def update_patient(patient_id: UUID, updated_patient: Patient):
     )
     try:
         with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query, params)
-            conn.commit()
-            if cursor.rowcount == 0:
-                raise HTTPException(status_code=404, detail="Patient not found")
-            return updated_patient
+            with conn.cursor() as cursor:
+                cursor.execute(query, params)
+                conn.commit()
+                if cursor.rowcount == 0:
+                    raise HTTPException(status_code=404, detail="Patient not found")
+                return updated_patient
     except Error as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/dispatch/", response_model=dict)
-async def dispatch_request(dispatch: DispatchRequest):
-    # Here, you can implement the logic to handle the dispatch,
-    # such as sending alerts to emergency services or saving to a log.
-
-    # For demonstration, we just log the dispatch information
-    print(f"Dispatching for Patient ID: {dispatch.patient_id}")
-    print(f"Emergency Type: {dispatch.emergency_type}")
-    print(f"Location: {dispatch.location}")
-    if dispatch.additional_info:
-        print(f"Additional Info: {dispatch.additional_info}")
-
-    # You might want to return a success message or details
-    return {"message": "Dispatch request submitted successfully."}
-
 
 @app.delete("/patients/{patient_id}", response_model=dict)
 async def delete_patient(patient_id: UUID):
     query = "DELETE FROM patients WHERE id = %s"
     try:
         with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query, (str(patient_id),))
-            conn.commit()
-            if cursor.rowcount == 0:
-                raise HTTPException(status_code=404, detail="Patient not found")
-            return {"message": "Patient deleted successfully"}
+            with conn.cursor() as cursor:
+                cursor.execute(query, (str(patient_id),))
+                conn.commit()
+                if cursor.rowcount == 0:
+                    raise HTTPException(status_code=404, detail="Patient not found")
+                return {"message": "Patient deleted successfully"}
     except Error as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/dispatch/", response_model=dict)
+async def dispatch_request(dispatch: DispatchRequest):
+    # Logic to handle the dispatch
+    print(f"Dispatching for Patient ID: {dispatch.patient_id}")
+    print(f"Emergency Type: {dispatch.emergency_type}")
+    print(f"Location: {dispatch.location}")
+    if dispatch.additional_info:
+        print(f"Additional Info: {dispatch.additional_info}")
+    return {"message": "Dispatch request submitted successfully."}
 
