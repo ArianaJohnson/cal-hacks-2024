@@ -15,10 +15,13 @@ setup
 linux:
     pip install fastapi
     pip install uvicorn
-    sudo apt install net-tools
-
+    sudo apt install net-tools 
     sudo npm install -g expo-cli
 
+mac
+
+pip install fastapi
+pip install uvicorn
 
 run this command on your machine inside the backend folder:
     uvicorn app:app --reload
@@ -34,8 +37,10 @@ Download the latest node.js and run npm install -g npm@latest
 
 then: 
     npx expo start --tunnel
+
+    ** make sure you are cd'd into the current directory **
+    npm i @expo/ngrok@^4.1.0 (macOS)
+
 it will prompt you to install ngrok. click yes.
 
-(**)
-**
 
