@@ -11,6 +11,7 @@ Add your ngrok token (find your command at https://dashboard.ngrok.com/get-start
 ngrok config add-authtoken YOUR_OWN_TOKEN_HERE -->
 
 setup
+    Gemini requires python3 >3.10
 
 linux:
     pip install fastapi
