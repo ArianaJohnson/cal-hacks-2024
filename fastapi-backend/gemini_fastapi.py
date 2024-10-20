@@ -19,13 +19,10 @@ class Inputs(BaseModel):
 
 # Route for beginning a conversation
 @router.post("/begin-conversation/")
-async def begin_conversation(inputs: Inputs, audiofile: UploadFile = File(...)):
+async def begin_conversation(inputs: Inputs, audiofile: str):
     try:
         # Save the audio file to a temporary directory
-        audiofile_name = f"temp_mp3/{audiofile.filename}"
-        with open(audiofile_name, "wb") as buffer:
-            buffer.write(await audiofile.read())
-
+        audiofile_name = f"temp_mp3/{audiofile}"
         # Upload the file to Google Gemini and start a conversation
         myfile = genai.upload_file(audiofile_name)
         prompt_test_data = f"""Imagine you are {inputs.patient.name}'s level-headed AI assistant whose purpose is to carry through a conversation 
@@ -68,15 +65,13 @@ async def begin_conversation(inputs: Inputs, audiofile: UploadFile = File(...)):
 
 # Route for continuing a conversation
 @router.post("/continue-conversation/")
-async def continue_conversation(chat_id: str, audiofile: UploadFile = File(...)):
+async def continue_conversation(chat_id: str, audiofile str):
     try:
         # Save the new audio file to a temporary directory
-        audiofile_name = f"temp_mp3/{audiofile.filename}"
-        with open(audiofile_name, "wb") as buffer:
-            buffer.write(await audiofile.read())
+        audiofile_name = f"temp_mp3/{audiofile}"
 
         # Retrieve the chat session and continue the conversation
-        chat = model.get_chat_by_id(chat_id)  # Assuming you have this method to retrieve a chat
+        myfile = genai.upload_file(audiofile_name)  # Assuming you have this method to retrieve a chat
         next_prompt_data = f"""The situation has updated. There are no changes in the situation. Remember, respond AS IF YOU ARE an assistant having a CONVERSATION with the DISPATCHER,
         ON BEHALF OF the user! And the dispatcher has told you what is in the AUDIO FILE. 
         BE PASSIVE! Do NOT overload with information the DISPATCHER DOES NOT REQUEST! Answer WHAT THE DISPATCHER
