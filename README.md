@@ -1,6 +1,6 @@
 
 
-# 911 Dispatch AI
+# Guardian Angel Application
 
 ## Overview
 
@@ -14,7 +14,7 @@ This project utilizes Deepgram and Gemini to automate the dispatch of 911 calls 
   - [Frontend Setup](#frontend-setup)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
+
 
 ## Technologies
 
