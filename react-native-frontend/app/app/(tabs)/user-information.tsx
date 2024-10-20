@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, Button, ScrollView, Image, ImageBackground, View, SafeAreaView } from 'react-native';
 import { Text } from '@/components/Themed';
-import { Dimensions } from 'react-native';
 
 export default function TabTwoScreen() {
   const [name, setName] = useState('');
@@ -35,12 +34,12 @@ export default function TabTwoScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
         <Image
-          source={require('./guardian_angels_bear.png')} 
+          source={require('./guardian_angels_bear.png')}
           style={styles.guardianAngel}
         />
 
         <Image
-          source={require('./patient information form.png')} 
+          source={require('./patient information form.png')}
           style={styles.patientInfoForm}
         />
 
@@ -64,7 +63,7 @@ const renderInputField = (label, value, onChangeText, additionalProps = {}) => (
     <Text style={styles.label}>{label}</Text>
     <ImageBackground
       source={require('./backgroundImage.png')}
-      style={[styles.inputBackground, { opacity: 0.9 }]} // Adjusted opacity
+      style={styles.inputBackground}
       imageStyle={styles.imageStyle}
     >
       <TextInput
@@ -108,13 +107,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
     overflow: 'hidden',
+    position: 'relative', // Set position to relative
   },
   label: {
     width: '100%',
-    marginBottom: 5,
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'NewsReader',
+    zIndex: 99,
+    color: 'black',
   },
   input: {
     height: '100%',
@@ -123,6 +125,9 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
     fontSize: 16,
+    fontFamily: 'NewsReader',
+    position: 'absolute', // Set position to absolute
+    zIndex: 99, // Ensure input is above the background
   },
   imageStyle: {
     borderRadius: 5,
