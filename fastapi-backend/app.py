@@ -5,10 +5,11 @@ import psycopg2
 from psycopg2 import sql, Error
 from models import *
 from gemini_fastapi import router as gemini_router
-
+from deepgram_prompter import router as deepgram_router
 app = FastAPI()
 # include the apis defined for gemini in another py
 app.include_router(gemini_router)
+app.include_router(deepgram_router)
 
 # Database connection settings
 DB_CONFIG = {
