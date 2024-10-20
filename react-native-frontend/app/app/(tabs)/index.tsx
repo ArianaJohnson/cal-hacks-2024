@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { useNavigation } from '@react-navigation/native';
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
@@ -9,6 +10,7 @@ export default function TabOneScreen() {
   const slideValue = useRef(new Animated.Value(0)).current; // Create a ref for animated value
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
+  const navigation = useNavigation(); // Get the navigation object
 
   const panResponder = useRef(
     PanResponder.create({
@@ -40,6 +42,7 @@ export default function TabOneScreen() {
       countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
     } else if (timer === 0) {
       setIsCalling(false);
+      navigation.navigate('emergency-response');
     }
 
     return () => clearTimeout(countdown);
