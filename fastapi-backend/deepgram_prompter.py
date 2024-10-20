@@ -44,5 +44,6 @@ def convert_text_to_speech(text: str) -> str:
             file.write(response.content)
         return audio_file_path
     else:
-        raise HTTPException(status_code=response.status_code, detail=response.text
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
 
