@@ -96,7 +96,7 @@ export default function TabOneScreen() {
         style={[styles.image1, { marginBottom: -120 }]}
       />
        <Image
-        source={require('./guardian angel.png')}  // Path to the local image
+        source={require('./guardian_angel.png')}  // Path to the local image
         style={styles.image2}
       />
 
@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
   emergencyButtonContainer: {
     width: 3000,
     height: 200,
-    borderRadius: 10,
+    borderRadius: 0,
+    marginTop: -100,
     overflow: 'hidden', // Ensures that the button doesn't overflow the container
     position: 'relative', // Allows for absolute positioning of the button
     justifyContent: 'center',
