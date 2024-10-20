@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
+import { useFonts, Newsreader } from '@expo-google-fonts/newsreader';
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
@@ -11,6 +12,15 @@ export default function TabOneScreen() {
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
   const navigation = useNavigation(); // Get the navigation object
+
+  let [fontsLoaded] = useFonts({
+    Newsreader,
+  });
+
+  // If fonts are not loaded, return null or a fallback UI
+  if (!fontsLoaded) {
+    return null; // Or you could return a simple placeholder component
+  }
 
   const panResponder = useRef(
     PanResponder.create({
@@ -55,8 +65,8 @@ export default function TabOneScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
-      <Text style={[styles.appName, { color: Colors[colorScheme].text }]}>guardian angel</Text>
+    <View style={[styles.container, { backgroundColor: 'white' }]}>
+      <Text style={[styles.appName, { color: Colors[colorScheme].text, fontFamily: 'Newsreader' }]}>guardian angel</Text>
 
       <View
         style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].tint }]}
@@ -69,17 +79,17 @@ export default function TabOneScreen() {
           ]}
         >
           <Pressable onPress={handleEmergencyPress}>
-            <Text style={styles.buttonText}>Emergency Call</Text>
+            <Text style={[styles.buttonText, { fontFamily: 'Newsreader' }]}>Emergency Call</Text>
           </Pressable>
         </Animated.View>
       </View>
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.timerText, { color: 'black', fontFamily: 'Newsreader' }]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'Newsreader' }]}>
             Slide to Cancel
           </Text>
         </View>
@@ -123,10 +133,10 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: 20,
     marginVertical: 10,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   cancelText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: 'center'
   },
 });
