@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import { useNavigation } from '@react-navigation/native';
+// import * as Font from 'expo-font';
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
@@ -9,6 +11,31 @@ export default function TabOneScreen() {
   const slideValue = useRef(new Animated.Value(0)).current; // Create a ref for animated value
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
+  const navigation = useNavigation(); // Get the navigation object
+  
+  // const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  // useEffect(() => {
+  //   async function loadFonts() {
+  //     await Font.loadAsync({
+  //       'Newsreader': require('NewsReader.ttf'), // Adjust the path as needed
+  //     });
+  //     setFontsLoaded(true);
+  //   }
+  //   loadFonts();
+  // }, []);
+
+  // if (!fontsLoaded) {
+  //   return <Text>Loading...</Text>; // Show loading or a fallback UI
+  // }
+
+  // State for image cycling
+  const [images] = useState([
+    require('./../../assets/images/panic1.png'), // Replace with actual image paths
+    require('./../../assets/images/panic2.png'),
+    require('./../../assets/images/panic3.png'),
+  ]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -40,10 +67,20 @@ export default function TabOneScreen() {
       countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
     } else if (timer === 0) {
       setIsCalling(false);
+      navigation.navigate('emergency-response');
     }
 
     return () => clearTimeout(countdown);
   }, [isCalling, timer]);
+
+  useEffect(() => {
+    // Set up image cycling
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 700); // Change image every 700 milliseconds
+
+    return () => clearInterval(interval); // Clear interval on component unmount
+  }, [images]);
 
   const handleEmergencyPress = () => {
     setIsCalling(true);
@@ -52,11 +89,23 @@ export default function TabOneScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
-      <Text style={[styles.appName, { color: Colors[colorScheme].text }]}>guardian angel</Text>
+
+    <View style={[styles.container, { backgroundColor: 'white' }]}>
+      <Image
+        source={require('./guardian_angels_bear.png')}  // Path to the local image
+        style={[styles.image1, { marginBottom: -120 }]}
+      />
+       <Image
+        source={require('./guardian_angel.png')}  // Path to the local image
+        style={styles.image2}
+      />
+      <Image
+        source={require('./descrip text.png')}  // Path to the local image
+        style={styles.descrip_text}
+      />
 
       <View
-        style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].tint }]}
+        style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].background }]}
         {...panResponder.panHandlers}
       >
         <Animated.View
@@ -66,17 +115,22 @@ export default function TabOneScreen() {
           ]}
         >
           <Pressable onPress={handleEmergencyPress}>
-            <Text style={styles.buttonText}>Emergency Call</Text>
+
+          <Image
+            source={images[currentImageIndex]}  // Use the current image from state
+            style={styles.panicImage}
+          />
+
           </Pressable>
         </Animated.View>
       </View>
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.timerText, { color: 'black', fontFamily: 'NewsReader'}]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'NewsReader'}]}>
             Slide to Cancel
           </Text>
         </View>
@@ -86,10 +140,39 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
+  panicImage: {
+    marginTop: -50,
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
+  image1: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
+
+  image2: {
+    width: 250,
+    height: 250,
+    marginBottom: 0,
+    resizeMode: 'contain',
+  },
+
+  descrip_text: {
+    position: 'absolute',
+    bottom: 0,
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 0,  // Ensure no extra padding at the top
+    marginTop: 0,
   },
   appName: {
     fontSize: 28,
@@ -97,9 +180,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   emergencyButtonContainer: {
-    width: 250,
-    height: 60,
-    borderRadius: 10,
+    width: 3000,
+    height: 200,
+    borderRadius: 0,
+    marginTop: -100,
     overflow: 'hidden', // Ensures that the button doesn't overflow the container
     position: 'relative', // Allows for absolute positioning of the button
     justifyContent: 'center',
@@ -107,10 +191,11 @@ const styles = StyleSheet.create({
   emergencyButton: {
     width: '100%',
     height: '100%',
+    resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: 'blue', // Change the color if needed
+    backgroundColor: 'white', // Changed this to white yee
   },
   buttonText: {
     fontSize: 18,
@@ -121,9 +206,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginVertical: 10,
     textAlign: 'center',
+    fontFamily: 'NewsReader',
   },
   cancelText: {
     fontSize: 16,
     textAlign: 'center',
+    fontFamily: 'NewsReader',
   },
 });

@@ -8,6 +8,13 @@ from models import *
 # adding the components we made
 from maps_fastapi import router as maps_router
 from gemini_fastapi import router as gemini_router
+from deepgram_prompter import router as deepgram_router
+app = FastAPI()
+# include the apis defined for gemini in another py
+app.include_router(gemini_router)
+app.include_router(deepgram_router)
+
+
 
 
 app = FastAPI()
