@@ -29,6 +29,14 @@ export default function TabOneScreen() {
   //   return <Text>Loading...</Text>; // Show loading or a fallback UI
   // }
 
+  // State for image cycling
+  const [images] = useState([
+    require('./../../assets/images/panic1.png'), // Replace with actual image paths
+    require('./../../assets/images/panic2.png'),
+    require('./../../assets/images/panic3.png'),
+  ]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gestureState) => {
@@ -65,6 +73,15 @@ export default function TabOneScreen() {
     return () => clearTimeout(countdown);
   }, [isCalling, timer]);
 
+  useEffect(() => {
+    // Set up image cycling
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 700); // Change image every 700 milliseconds
+
+    return () => clearInterval(interval); // Clear interval on component unmount
+  }, [images]);
+
   const handleEmergencyPress = () => {
     setIsCalling(true);
     slideValue.setValue(0); // Reset slide position
@@ -84,7 +101,7 @@ export default function TabOneScreen() {
       />
 
       <View
-        style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].tint }]}
+        style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].background }]}
         {...panResponder.panHandlers}
       >
         <Animated.View
@@ -94,7 +111,12 @@ export default function TabOneScreen() {
           ]}
         >
           <Pressable onPress={handleEmergencyPress}>
-            <Text style={[styles.buttonText]}>Emergency Call</Text>
+
+          <Image
+            source={images[currentImageIndex]}  // Use the current image from state
+            style={styles.image}
+          />
+
           </Pressable>
         </Animated.View>
       </View>
@@ -137,8 +159,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   emergencyButtonContainer: {
-    width: 250,
-    height: 60,
+    width: 3000,
+    height: 200,
     borderRadius: 10,
     overflow: 'hidden', // Ensures that the button doesn't overflow the container
     position: 'relative', // Allows for absolute positioning of the button
@@ -150,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: 'blue', // Change the color if needed
+    backgroundColor: 'white', // Changed this to white yee
   },
   buttonText: {
     fontSize: 18,

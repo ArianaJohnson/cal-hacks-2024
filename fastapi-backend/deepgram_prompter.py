@@ -23,9 +23,9 @@ def emphasize_keywords(text):
         text = re.sub(rf'\b{word}\b', f'<emphasis>{word}</emphasis>', text, flags=re.IGNORECASE)
     return text
 
-def convert_text_to_speech(text):
-    ssml_text = f"<speak>{emphasize_keywords(text)}</speak>"
 
+def convert_text_to_speech(text: str) -> str:
+    ssml_text = f"<speak>{text}</speak>"  # Wrap text in SSML
     headers = {
         'Authorization': f'Token {DEEPGRAM_API_KEY}',
         'Content-Type': 'application/json',
@@ -39,27 +39,11 @@ def convert_text_to_speech(text):
     response = requests.post(DEEPGRAM_API_URL, headers=headers, json=payload)
 
     if response.status_code == 200:
-        audio_file = 'output_audio.wav'
-        with open(audio_file, 'wb') as file:
+        audio_file_path = 'output_audio.wav'
+        with open(audio_file_path, 'wb') as file:
             file.write(response.content)
-        return audio_file
+        return audio_file_path
     else:
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
 
-@router.post("/receive_gemini_text/{user_id}")
-def receive_gemini_text(user_id: str, text: str):
-    if user_id not in conversations:
-        conversations[user_id] = []
-
-    # Store the received text
-    conversations[user_id].append({"role": "user", "message": text})
-
-    # Convert the text to speech
-    audio_file = convert_text_to_speech(text)
-
-    return {
-        "message": "Text received and converted to speech.",
-        "audio_file": audio_file,
-        "conversation": conversations[user_id]  # Show the conversation history
-    }

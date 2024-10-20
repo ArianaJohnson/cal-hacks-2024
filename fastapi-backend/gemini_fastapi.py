@@ -4,6 +4,7 @@ from pydantic import BaseModel, UUID4
 from typing import List, Optional
 from keys import GEMINI_KEY
 from models import *
+from deepgram_prompter import convert_text_to_speech
 
 # Configure the Google Gemini model
 genai.configure(api_key=GEMINI_KEY)
@@ -82,8 +83,11 @@ async def continue_conversation(chat_id: str, audiofile: UploadFile = File(...))
         ASKS FOR! DO NOT GIVE INFORMATION THAT THEY DON'T ASK FOR! Respond in Plain, unformatted text."""
         myfile = genai.upload_file(audiofile_name)
         response = chat.send_message([myfile, next_prompt_data])
+        audio_file_path = convert_text_to_speech(response.text)
 
-        return {"response": response.text}
+        return {"response": response.text
+
+        }
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
