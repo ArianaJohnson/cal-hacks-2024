@@ -3,39 +3,23 @@ import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
-// import * as Font from 'expo-font';
+import * as Permissions from "expo-permissions";
+import { Audio } from 'expo-av';
+import axios from 'axios';
+
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
+  const permission = await requestMicrophonePermission();
   const [isCalling, setIsCalling] = useState(false);
   const slideValue = useRef(new Animated.Value(0)).current; // Create a ref for animated value
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
-  const navigation = useNavigation(); // Get the navigation object
-  
-  // const [fontsLoaded, setFontsLoaded] = useState(false);
+  const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   async function loadFonts() {
-  //     await Font.loadAsync({
-  //       'Newsreader': require('NewsReader.ttf'), // Adjust the path as needed
-  //     });
-  //     setFontsLoaded(true);
-  //   }
-  //   loadFonts();
-  // }, []);
+// Get the navigation object
 
-  // if (!fontsLoaded) {
-  //   return <Text>Loading...</Text>; // Show loading or a fallback UI
-  // }
 
-  // State for image cycling
-  const [images] = useState([
-    require('./../../assets/images/panic1.png'), // Replace with actual image paths
-    require('./../../assets/images/panic2.png'),
-    require('./../../assets/images/panic3.png'),
-  ]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -47,7 +31,7 @@ export default function TabOneScreen() {
         const newValue = Math.min(buttonWidth, gestureState.dx); // Limit sliding to button width
         slideValue.setValue(newValue); // Set the value of the animated variable
       },
-      onPanResponderRelease: () => {
+      onPanResponderRelease: async () => {
         // Slide is sufficient to cancel
         if (slideValue.__getValue() >= buttonWidth / 2) {
           Alert.alert('Call Cancelled', 'The emergency call has been cancelled.');
@@ -61,51 +45,87 @@ export default function TabOneScreen() {
     })
   ).current;
 
-  useEffect(() => {
-    let countdown;
-    if (isCalling && timer > 0) {
-      countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
-    } else if (timer === 0) {
-      setIsCalling(false);
-      navigation.navigate('emergency-response');
+
+    const handleEmergencyPress = async () => {
+    await requestMicrophonePermission();
+    const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+    if (status !== 'granted') {
+      Alert.alert('Microphone Permission', 'Sorry, we need microphone permissions to make this work!');
+    }
+  }
+
+
+  async function startRecording() {
+    try {
+      const { recording } = await Audio.Recording.createAsync({
+        android: {
+          extension: '.wav',
+          outputFormat: Audio.RecordingOptionsAndroid.OutputFormat.DEFAULT,
+          encoding: Audio.RecordingOptionsAndroid.Encoding.PCM_16BIT,
+          sampleRate: 16000,
+          numberOfChannels: 1,
+        },
+      });
+      setRecording(recording);
+      return true;
+    } catch (error) {
+      console.error('Failed to start recording', error);
+      return false;
+    }
+  }
+
+  async function stopRecording() {
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      console.log('Recording stopped and stored at', uri);
+      await sendAudioToDispatch(xuri);
+      setRecording(null);
+    }
+  }
+
+  async function sendAudioToDispatch(uri: string | null) {
+    if (!uri) {
+      console.error('No URI provided for audio');
+      return;
     }
 
-    return () => clearTimeout(countdown);
-  }, [isCalling, timer]);
+    const formData = new FormData();
 
-  useEffect(() => {
-    // Set up image cycling
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 700); // Change image every 700 milliseconds
+    formData.append('audio', {
+      uri,
+      name: 'audio.wav',
+      type: 'audio/wav',
+    } as any); // Cast to any if TypeScript is giving an error
 
-    return () => clearInterval(interval); // Clear interval on component unmount
-  }, [images]);
+    try {
+      const response = await axios.post('http://10.42.159.255:8000/dispatch/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-  const handleEmergencyPress = () => {
-    setIsCalling(true);
-    slideValue.setValue(0); // Reset slide position
-    setTimer(5); // Reset the timer for the countdown
-  };
-
-  return (
-
-    <View style={[styles.container, { backgroundColor: 'white' }]}>
+      if (response.status === 200) {
+        Alert.alert('Success', 'Your audio has been sent to emergency services.');
+      } else {
+        console.error('Failed to dispatch audio', response.data);
+        Alert.alert('Error', 'Failed to send audio to emergency services.');
+      }
+    } catch (error) {
+      console.error('Error sending audio to API', error);
+      Alert.alert('Error', 'An error occurred while sending audio.');
+    }
+  }
+    return (
+    <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
       <Image
         source={require('./guardian_angels_bear.png')}  // Path to the local image
-        style={[styles.image1, { marginBottom: -120 }]}
+        style={styles.image}
       />
-       <Image
-        source={require('./guardian_angel.png')}  // Path to the local image
-        style={styles.image2}
-      />
-      <Image
-        source={require('./descrip text.png')}  // Path to the local image
-        style={styles.descrip_text}
-      />
+      <Text style={[styles.appName, { color: Colors[colorScheme].text }]}>guardian angel</Text>
 
       <View
-        style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].background }]}
+        style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].tint }]}
         {...panResponder.panHandlers}
       >
         <Animated.View
@@ -115,22 +135,17 @@ export default function TabOneScreen() {
           ]}
         >
           <Pressable onPress={handleEmergencyPress}>
-
-          <Image
-            source={images[currentImageIndex]}  // Use the current image from state
-            style={styles.panicImage}
-          />
-
+            <Text style={styles.buttonText}>Emergency Call</Text>
           </Pressable>
         </Animated.View>
       </View>
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: 'black', fontFamily: 'NewsReader'}]}>
+          <Text style={[styles.timerText, { color: Colors[colorScheme].text }]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'NewsReader'}]}>
+          <Text style={[styles.cancelText, { color: Colors[colorScheme].text }]}>
             Slide to Cancel
           </Text>
         </View>
@@ -145,33 +160,10 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
   },
-  image1: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-  },
-
-  image2: {
-    width: 250,
-    height: 250,
-    marginBottom: 0,
-    resizeMode: 'contain',
-  },
-
-  descrip_text: {
-    position: 'absolute',
-    bottom: 0,
-    width: 250,
-    height: 250,
-    resizeMode: 'contain',
-  },
-
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 0,  // Ensure no extra padding at the top
-    marginTop: 0,
   },
   appName: {
     fontSize: 28,
@@ -179,10 +171,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   emergencyButtonContainer: {
-    width: 3000,
-    height: 200,
-    borderRadius: 0,
-    marginTop: -100,
+    width: 250,
+    height: 60,
+    borderRadius: 10,
     overflow: 'hidden', // Ensures that the button doesn't overflow the container
     position: 'relative', // Allows for absolute positioning of the button
     justifyContent: 'center',
@@ -190,11 +181,10 @@ const styles = StyleSheet.create({
   emergencyButton: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: 'white', // Changed this to white yee
+    backgroundColor: 'blue', // Change the color if needed
   },
   buttonText: {
     fontSize: 18,
@@ -205,11 +195,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginVertical: 10,
     textAlign: 'center',
-    fontFamily: 'NewsReader',
   },
   cancelText: {
     fontSize: 16,
     textAlign: 'center',
-    fontFamily: 'NewsReader',
   },
 });

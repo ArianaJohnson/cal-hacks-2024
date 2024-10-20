@@ -38,10 +38,14 @@ export default function TabTwoScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} >
       <Text style={styles.title}>Emergency Dispatch Responder</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       {error && <Text style={styles.error}>{error}</Text>}
+      <Image
+            source={require('../../assets/images/emergencybubble.png')}  // Path to the local image
+            style={styles.image}
+          />
       <Button
         title={loading ? "Loading..." : "Simulate dispatch"}
         onPress={callApi}
@@ -56,6 +60,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'white',
   },
   title: {
     fontSize: 20,
@@ -70,4 +75,9 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
   },
+  image: {
+    height: 300,
+    width: 300,
+    resizeMode: 'contain',
+  }
 });
