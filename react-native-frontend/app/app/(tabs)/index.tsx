@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
+// import * as Font from 'expo-font';
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
@@ -11,6 +12,22 @@ export default function TabOneScreen() {
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
   const navigation = useNavigation(); // Get the navigation object
+  
+  // const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  // useEffect(() => {
+  //   async function loadFonts() {
+  //     await Font.loadAsync({
+  //       'Newsreader': require('NewsReader.ttf'), // Adjust the path as needed
+  //     });
+  //     setFontsLoaded(true);
+  //   }
+  //   loadFonts();
+  // }, []);
+
+  // if (!fontsLoaded) {
+  //   return <Text>Loading...</Text>; // Show loading or a fallback UI
+  // }
 
   // State for image cycling
   const [images] = useState([
@@ -72,8 +89,16 @@ export default function TabOneScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
-      <Text style={[styles.appName, { color: Colors[colorScheme].text }]}>guardian angel</Text>
+
+    <View style={[styles.container, { backgroundColor: 'white' }]}>
+      <Image
+        source={require('./guardian_angels_bear.png')}  // Path to the local image
+        style={[styles.image1, { marginBottom: -120 }]}
+      />
+       <Image
+        source={require('./guardian angel.png')}  // Path to the local image
+        style={styles.image2}
+      />
 
       <View
         style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].background }]}
@@ -86,20 +111,22 @@ export default function TabOneScreen() {
           ]}
         >
           <Pressable onPress={handleEmergencyPress}>
+
           <Image
             source={images[currentImageIndex]}  // Use the current image from state
             style={styles.image}
           />
+
           </Pressable>
         </Animated.View>
       </View>
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.timerText, { color: 'black'}]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.cancelText, { color: 'black'}]}>
             Slide to Cancel
           </Text>
         </View>
@@ -109,11 +136,18 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
-  image: {
+  image1: {
     width: 200,
     height: 200,
     resizeMode: 'contain',
   },
+
+  image2: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -149,9 +183,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginVertical: 10,
     textAlign: 'center',
+    fontFamily: 'NewsReader',
   },
   cancelText: {
     fontSize: 16,
     textAlign: 'center',
+    fontFamily: 'NewsReader',
   },
 });
