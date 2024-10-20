@@ -4,8 +4,11 @@ from uuid import uuid4, UUID
 import psycopg2
 from psycopg2 import sql, Error
 from models import *
+from gemini_fastapi import router as gemini_router
 
 app = FastAPI()
+# include the apis defined for gemini in another py
+app.include_router(gemini_router)
 
 # Database connection settings
 DB_CONFIG = {
