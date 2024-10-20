@@ -127,10 +127,10 @@ export default function TabOneScreen() {
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: 'black'}]}>
+          <Text style={[styles.timerText, { color: 'black', fontFamily: 'NewsReader'}]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: 'black'}]}>
+          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'NewsReader'}]}>
             Slide to Cancel
           </Text>
         </View>
