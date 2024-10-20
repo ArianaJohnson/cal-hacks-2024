@@ -1,6 +1,6 @@
 import google.generativeai as genai
 import os
-from keys import gemini_key
+from keys import *
 from models import *
 
 # class inputs():
@@ -27,10 +27,10 @@ if __name__ == "__main__":
 
     [911, what is your emergency?]
     """
-    genai.configure(api_key=gemini_key)
+    genai.configure(api_key="AIzaSyBFGi_7SBQXiHlfiD8yk_lxkd5N2fd5-Wc")
     model = genai.GenerativeModel("gemini-1.5-flash")
-    response = model.generate_content(prompt)
+    response = model.generate_content(prompt_test_data)
     print(response.text)
-    while true:
+    while 1:
         response = model.generate_content(input())
         print(response.text)
