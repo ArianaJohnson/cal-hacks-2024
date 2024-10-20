@@ -27,6 +27,7 @@ export default function TabLayout() {
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
       }}>
+      {/* First tab: Home (index) */}
       <Tabs.Screen
         name="index"
         options={{
@@ -49,10 +50,12 @@ export default function TabLayout() {
           ),
         }}
       />
+      
+      {/* Second tab: My Information */}
       <Tabs.Screen
         name="user-information"
         options={{
-          title: 'User Information',
+          title: 'my information',
           tabBarIcon: ({ color }) => <TabBarIcon name="gears" color={color} />,
         }}
       />

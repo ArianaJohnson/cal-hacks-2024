@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, Button, ScrollView } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, TextInput, Button, ScrollView, Image, ImageBackground, View, SafeAreaView } from 'react-native';
+import { Text } from '@/components/Themed';
+import { Dimensions } from 'react-native';
 
 export default function TabTwoScreen() {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
   const [emergencyContactName, setEmergencyContactName] = useState('');
   const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
   const [medicalConditions, setMedicalConditions] = useState('');
@@ -14,7 +16,8 @@ export default function TabTwoScreen() {
   const handleSubmit = () => {
     const patientData = {
       name,
-      age: parseInt(age),
+      age: isNaN(parseInt(age)) ? null : parseInt(age),
+      gender,
       emergency_contact: {
         name: emergencyContactName,
         phone: emergencyContactPhone,
@@ -25,96 +28,103 @@ export default function TabTwoScreen() {
         medications: medications ? medications.split(',') : [],
       },
     };
-    console.log(patientData); // You can send this data to your FastAPI backend
-    // Here, you can make a POST request to the backend API
+    console.log(patientData);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Patient Information Form</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
+        <Image
+          source={require('./guardian_angels_bear.png')} 
+          style={styles.guardianAngel}
+        />
 
-      <Text>Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter name"
-        value={name}
-        onChangeText={setName}
-      />
+        <Image
+          source={require('./patient information form.png')} 
+          style={styles.patientInfoForm}
+        />
 
-      <Text>Age</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter age"
-        value={age}
-        keyboardType="numeric"
-        onChangeText={setAge}
-      />
+        {renderInputField("Name", name, setName)}
+        {renderInputField("Age", age, setAge, { keyboardType: "numeric" })}
+        {renderInputField("Gender", gender, setGender)}
+        {renderInputField("Emergency Contact Name", emergencyContactName, setEmergencyContactName)}
+        {renderInputField("Emergency Contact Phone", emergencyContactPhone, setEmergencyContactPhone, { keyboardType: "phone-pad" })}
+        {renderInputField("Medical Conditions (comma-separated)", medicalConditions, setMedicalConditions)}
+        {renderInputField("Allergies (comma-separated, optional)", allergies, setAllergies)}
+        {renderInputField("Medications (comma-separated, optional)", medications, setMedications)}
 
-      <Text>Emergency Contact Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter emergency contact name"
-        value={emergencyContactName}
-        onChangeText={setEmergencyContactName}
-      />
-
-      <Text>Emergency Contact Phone</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter emergency contact phone"
-        value={emergencyContactPhone}
-        keyboardType="phone-pad"
-        onChangeText={setEmergencyContactPhone}
-      />
-
-      <Text>Medical Conditions (comma-separated)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter medical conditions"
-        value={medicalConditions}
-        onChangeText={setMedicalConditions}
-      />
-
-      <Text>Allergies (comma-separated, optional)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter allergies"
-        value={allergies}
-        onChangeText={setAllergies}
-      />
-
-      <Text>Medications (comma-separated, optional)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter medications"
-        value={medications}
-        onChangeText={setMedications}
-      />
-
-      <Button title="Submit" onPress={handleSubmit} />
-    </ScrollView>
+        <Button title="Submit" onPress={handleSubmit} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
+const renderInputField = (label, value, onChangeText, additionalProps = {}) => (
+  <View style={styles.inputFieldContainer}>
+    <Text style={styles.label}>{label}</Text>
+    <ImageBackground
+      source={require('./backgroundImage.png')}
+      style={[styles.inputBackground, { opacity: 0.9 }]} // Adjusted opacity
+      imageStyle={styles.imageStyle}
+    >
+      <TextInput
+        style={styles.input}
+        placeholder={`Enter ${label.toLowerCase()}`}
+        value={value}
+        onChangeText={onChangeText}
+        {...additionalProps}
+      />
+    </ImageBackground>
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  guardianAngel: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  patientInfoForm: {
+    width: 350,
+    height: 350,
+    alignSelf: 'center',
+    resizeMode: 'contain',
+    marginBottom: -150,
+    marginTop: -170,
+  },
+  inputFieldContainer: {
+    marginBottom: 15,
+  },
+  inputBackground: {
+    width: '100%',
+    height: 60,
+    justifyContent: 'center',
+    marginBottom: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
+  label: {
+    width: '100%',
+    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   input: {
-    width: '100%',
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
+    height: '100%',
     paddingHorizontal: 10,
-    marginBottom: 10,
+    paddingVertical: 5,
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  imageStyle: {
+    borderRadius: 5,
   },
 });

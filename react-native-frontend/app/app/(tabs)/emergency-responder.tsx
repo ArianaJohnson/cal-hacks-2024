@@ -39,8 +39,11 @@ export default function TabTwoScreen() {
 
   return (
     <View style={styles.container} >
-      <Text style={styles.title}>Emergency Dispatch Responder</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+       <Image
+        source={require('./emergency dispatch responder.png')}  // Ensure the path is correct
+        style={styles.text}
+      />
+      <View style={styles.separator} Color='black' />
       {error && <Text style={styles.error}>{error}</Text>}
       <Image
             source={require('../../assets/images/emergencybubble.png')}  // Path to the local image
@@ -62,14 +65,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
   },
+  text: {
+    width: 350,
+    height: 350,
+    alignSelf: 'center',
+    resizeMode: 'contain',
+    marginBottom: -220,
+    marginTop: -100
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'black',
+    fontFamily: 'Newsreader',
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: '80%',
+    color: 'black',
   },
   error: {
     color: 'red',
