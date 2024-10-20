@@ -2,28 +2,42 @@ import React, { useState } from 'react';
 import { StyleSheet, Button, View, Image} from 'react-native';
 import axios from 'axios';
 import { Text } from '@/components/Themed';
-
-
-
 export default function TabTwoScreen() {
+  const [isBegin, setIsBegin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const callApi = async () => {
+    if(!isBegin){
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/begin_conversation/');
+        
+        console.log('Response:', response.data);
+        // Optionally handle successful response (e.g., navigate or show a message)
+      } catch (err) {
+        console.error('Error calling API:', err);
+        setError('Failed to create patient.');
+      } finally {
+        setLoading(false);
+      }
+      setIsBegin(true);
+    } else {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/continue_conversation/');
+        
+        console.log('Response:', response.data);
+        // Optionally handle successful response (e.g., navigate or show a message)
+      } catch (err) {
+        console.error('Error calling API:', err);
+        setError('Failed to create patient.');
+      } finally {
+        setLoading(false);
+      }
+      setIsBegin(false);
+    }
     setLoading(true);
     setError(null); // Reset any previous errors
 
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/begin_conversation/');
-      
-      console.log('Response:', response.data);
-      // Optionally handle successful response (e.g., navigate or show a message)
-    } catch (err) {
-      console.error('Error calling API:', err);
-      setError('Failed to create patient.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

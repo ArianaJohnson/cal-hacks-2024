@@ -86,10 +86,10 @@ async def begin_conversation():
 
 # Route for continuing a conversation
 @router.post("/continue_conversation/")
-async def continue_conversation(audiofile: str):
+async def continue_conversation():
     try:
         # Save the new audio file to a temporary directory
-        audiofile_name = f"temp_mp3/{audiofile}"
+        audiofile_name = f"temp_mp3/sample_2.mp3"
 
         # Retrieve the chat session and continue the conversation
         myfile = genai.upload_file(audiofile_name)  # Assuming you have this method to retrieve a chat
