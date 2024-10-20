@@ -10,7 +10,7 @@ import axios from 'axios';
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
-  const permission = requestMicrophonePermission();
+  const permission = await requestMicrophonePermission();
   const [isCalling, setIsCalling] = useState(false);
   const slideValue = useRef(new Animated.Value(0)).current; // Create a ref for animated value
   const [timer, setTimer] = useState(5);
