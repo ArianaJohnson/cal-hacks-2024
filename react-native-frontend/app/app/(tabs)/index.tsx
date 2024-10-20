@@ -155,7 +155,7 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
-  image: {
+  panicImage: {
     width: 200,
     height: 200,
     resizeMode: 'contain',
