@@ -1,5 +1,6 @@
 {
   "expo": {
+
     "name": "app",
     "slug": "app",
     "version": "1.0.0",
@@ -10,7 +11,11 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO"
+      ]
     },
     "ios": {
       "supportsTablet": true
