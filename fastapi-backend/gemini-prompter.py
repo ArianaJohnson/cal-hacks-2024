@@ -73,6 +73,7 @@ def continueConversation(chat, audiofile_name):
     BE PASSIVE! Do NOT overload with information the DISPATCHER DOES NOT REQUEST! Answer WHAT THE DISPATCHER
     ASKS FOR! DO NOT GIVE INFORMATION THAT THEY DON'T ASK FOR! Respond in Plain, unformatted text.
     """
+
     myfile = genai.upload_file(f"temp_mp3/{audiofile_name}")
     response = chat.send_message([myfile, next_prompt_data])
     return response.text
