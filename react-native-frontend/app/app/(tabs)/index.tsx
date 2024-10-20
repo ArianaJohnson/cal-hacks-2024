@@ -99,10 +99,6 @@ export default function TabOneScreen() {
         source={require('./guardian_angel.png')}  // Path to the local image
         style={styles.image2}
       />
-      <Image
-        source={require('./descrip text.png')}  // Path to the local image
-        style={styles.descrip_text}
-      />
 
       <View
         style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].background }]}
@@ -135,13 +131,20 @@ export default function TabOneScreen() {
           </Text>
         </View>
       )}
+      {!isCalling && (
+        <View>
+          <Image
+            source={require('./descrip text.png')}  // Path to the local image
+            style={styles.descrip_text}
+          />
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   panicImage: {
-    marginTop: -50,
     width: 200,
     height: 200,
     resizeMode: 'contain',
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
   },
 
   descrip_text: {
-    position: 'absolute',
+    marginTop: -90,
     bottom: 0,
     width: 250,
     height: 250,
