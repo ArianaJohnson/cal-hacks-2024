@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
@@ -56,6 +56,10 @@ export default function TabOneScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
+      <Image
+        source={require('./guardian_angels_bear.png')}  // Path to the local image
+        style={styles.image}
+      />
       <Text style={[styles.appName, { color: Colors[colorScheme].text }]}>guardian angel</Text>
 
       <View
@@ -89,6 +93,11 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
