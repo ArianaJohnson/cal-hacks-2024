@@ -24,7 +24,7 @@ mac:
 pip install fastapi
 pip install uvicorn
 pip install psycopg2-binary
-
+pip install python-multipart
 
 run this command on your machine inside the backend folder:
     uvicorn app:app --reload
