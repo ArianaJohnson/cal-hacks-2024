@@ -65,8 +65,13 @@ export default function TabOneScreen() {
   };
 
   return (
+
     <View style={[styles.container, { backgroundColor: 'white' }]}>
-      <Text style={[styles.appName, { color: Colors[colorScheme].text, fontFamily: 'Newsreader' }]}>guardian angel</Text>
+      <Image
+        source={require('./guardian_angels_bear.png')}  // Path to the local image
+        style={styles.image}
+      />
+      <Text style={[styles.appName, { color: 'black'.text }]}>guardian angel</Text>
 
       <View
         style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].tint }]}
@@ -99,6 +104,11 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

@@ -13,6 +13,13 @@ app = FastAPI()
 # include the apis defined for gemini in another py
 app.include_router(gemini_router)
 app.include_router(deepgram_router)
+
+
+
+
+app = FastAPI()
+# include the apis defined for gemini in another py
+app.include_router(gemini_router)
 app.include_router(maps_router)
 
 # Database connection settings
