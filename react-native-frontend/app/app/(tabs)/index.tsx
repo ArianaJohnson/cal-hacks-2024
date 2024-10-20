@@ -114,7 +114,7 @@ export default function TabOneScreen() {
 
           <Image
             source={images[currentImageIndex]}  // Use the current image from state
-            style={styles.image}
+            style={styles.panicImage}
           />
 
           </Pressable>
@@ -136,6 +136,11 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
+  panicImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
   image1: {
     width: 200,
     height: 200,
@@ -169,6 +174,7 @@ const styles = StyleSheet.create({
   emergencyButton: {
     width: '100%',
     height: '100%',
+    resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
