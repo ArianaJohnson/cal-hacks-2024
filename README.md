@@ -7,45 +7,36 @@
         && sudo apt update \
         && sudo apt install ngrok
 
-Add your ngrok token (find your command at https://dashboard.ngrok.com/get-started/setup/linux)
-ngrok config add-authtoken YOUR_OWN_TOKEN_HERE -->
+# 911 Dispatch AI
 
-setup
-    Gemini requires python3 >3.10
+## Overview
 
-linux:
-    pip install fastapi
-    pip install uvicorn
-    pip install httpx
+This project utilizes Deepgram and Gemini to automate the dispatch of 911 calls when individuals are unable to do so themselves. It features a React Native front end for user interaction and a FastAPI back end for processing requests.
 
-    sudo apt install net-tools 
-    sudo npm install -g expo-cli
+## Table of Contents
 
-mac:
+- [Technologies](#technologies)
+- [Installation](#installation)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-pip install fastapi
-pip install uvicorn
-pip install psycopg2-binary
+## Technologies
 
+- **Frontend**: React Native
+- **Backend**: FastAPI
+- **AI**: Deepgram, Gemini
+- **Database**: PostgreSQL (with psycopg2)
+- **Tooling**: Expo CLI, ngrok
 
-run this command on your machine inside the backend folder:
-    uvicorn app:app --reload
+## Installation
 
+### Backend Setup
 
+1. **Install Python Dependencies**
 
-To open the frontend, you need expo.
-npm -v
-
-Download the latest node.js and run npm install -g npm@latest
-
-
-
-then: 
-    npx expo start --tunnel
-
-    ** make sure you are cd'd into the current directory **
-    npm i @expo/ngrok@^4.1.0 (macOS)
-
-it will prompt you to install ngrok. click yes.
-
-
+   For **Linux**:
+   ```bash
+   pip install fastapi httpx uvicorn
