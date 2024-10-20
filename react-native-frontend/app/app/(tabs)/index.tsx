@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
+import { Accelerometer } from 'expo-sensors';
 // import * as Font from 'expo-font';
 
 export default function TabOneScreen() {
@@ -12,7 +13,41 @@ export default function TabOneScreen() {
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
   const navigation = useNavigation(); // Get the navigation object
-  
+
+  // Accelerometer
+  const [{ x, y, z }, setData] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
+  const [subscription, setSubscription] = useState(null);
+  const _subscribe = () => {
+    setSubscription(Accelerometer.addListener(setData));
+  };
+  const _unsubscribe = () => {
+    subscription && subscription.remove();
+    setSubscription(null);
+  };
+  useEffect(() => {
+    // Accelerometer
+    Accelerometer.setUpdateInterval(200);
+
+    Accelerometer.isAvailableAsync().then(isAvailable => {
+      if (isAvailable) {
+        _subscribe();
+      } else {
+        Alert.alert('Accelerometer not available on this device');
+      }
+    });
+    return () => _unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (Math.sqrt(Math.abs(x) ** 2 + Math.abs(y) ** 2 + Math.abs(z) ** 2) > 2.5) {
+      handleEmergencyPress();
+    }
+  }, [x]);
+
   // const [fontsLoaded, setFontsLoaded] = useState(false);
 
   // useEffect(() => {
@@ -95,7 +130,7 @@ export default function TabOneScreen() {
         source={require('./guardian_angels_bear.png')}  // Path to the local image
         style={[styles.image1, { marginBottom: -120 }]}
       />
-       <Image
+      <Image
         source={require('./guardian_angel.png')}  // Path to the local image
         style={styles.image2}
       />
@@ -112,10 +147,10 @@ export default function TabOneScreen() {
         >
           <Pressable onPress={handleEmergencyPress}>
 
-          <Image
-            source={images[currentImageIndex]}  // Use the current image from state
-            style={styles.panicImage}
-          />
+            <Image
+              source={images[currentImageIndex]}  // Use the current image from state
+              style={styles.panicImage}
+            />
 
           </Pressable>
         </Animated.View>
@@ -123,10 +158,10 @@ export default function TabOneScreen() {
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: 'black', fontFamily: 'NewsReader'}]}>
+          <Text style={[styles.timerText, { color: 'black', fontFamily: 'NewsReader' }]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'NewsReader'}]}>
+          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'NewsReader' }]}>
             Slide to Cancel
           </Text>
         </View>
