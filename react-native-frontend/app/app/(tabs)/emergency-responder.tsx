@@ -3,6 +3,8 @@ import { StyleSheet, Button, View, Image} from 'react-native';
 import axios from 'axios';
 import { Text } from '@/components/Themed';
 
+
+
 export default function TabTwoScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,20 +14,7 @@ export default function TabTwoScreen() {
     setError(null); // Reset any previous errors
 
     try {
-      const response = await axios.post('http://10.42.131.62:8000/begin-conversation/', {
-        // Sample patient data; adjust as needed
-        name: 'John Doe',
-        age: 30,
-        emergency_contact: {
-          name: 'Jane Doe',
-          phone: '123-456-7890',
-        },
-        medical_info: {
-          medical_conditions: ['Asthma'],
-          allergies: ['Peanuts'],
-          medications: ['Inhaler'],
-        },
-      });
+      const response = await axios.post('http://127.0.0.1:8000/begin_conversation/');
       
       console.log('Response:', response.data);
       // Optionally handle successful response (e.g., navigate or show a message)
