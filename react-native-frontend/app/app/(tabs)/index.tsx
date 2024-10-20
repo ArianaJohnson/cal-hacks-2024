@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, Alert, PanResponder, Animated, Image
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
-import { useFonts, Newsreader } from '@expo-google-fonts/newsreader';
+// import * as Font from 'expo-font';
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
@@ -12,15 +12,22 @@ export default function TabOneScreen() {
   const [timer, setTimer] = useState(5);
   const buttonWidth = 250; // Width of the emergency button
   const navigation = useNavigation(); // Get the navigation object
+  
+  // const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  let [fontsLoaded] = useFonts({
-    Newsreader,
-  });
+  // useEffect(() => {
+  //   async function loadFonts() {
+  //     await Font.loadAsync({
+  //       'Newsreader': require('NewsReader.ttf'), // Adjust the path as needed
+  //     });
+  //     setFontsLoaded(true);
+  //   }
+  //   loadFonts();
+  // }, []);
 
-  // If fonts are not loaded, return null or a fallback UI
-  if (!fontsLoaded) {
-    return null; // Or you could return a simple placeholder component
-  }
+  // if (!fontsLoaded) {
+  //   return <Text>Loading...</Text>; // Show loading or a fallback UI
+  // }
 
   const panResponder = useRef(
     PanResponder.create({
@@ -69,9 +76,12 @@ export default function TabOneScreen() {
     <View style={[styles.container, { backgroundColor: 'white' }]}>
       <Image
         source={require('./guardian_angels_bear.png')}  // Path to the local image
-        style={styles.image}
+        style={[styles.image1, { marginBottom: -120 }]}
       />
-      <Text style={[styles.appName, { color: 'black'.text }]}>guardian angel</Text>
+       <Image
+        source={require('./guardian angel.png')}  // Path to the local image
+        style={styles.image2}
+      />
 
       <View
         style={[styles.emergencyButtonContainer, { backgroundColor: Colors[colorScheme].tint }]}
@@ -84,17 +94,17 @@ export default function TabOneScreen() {
           ]}
         >
           <Pressable onPress={handleEmergencyPress}>
-            <Text style={[styles.buttonText, { fontFamily: 'Newsreader' }]}>Emergency Call</Text>
+            <Text style={[styles.buttonText]}>Emergency Call</Text>
           </Pressable>
         </Animated.View>
       </View>
 
       {isCalling && (
         <View>
-          <Text style={[styles.timerText, { color: 'black', fontFamily: 'Newsreader' }]}>
+          <Text style={[styles.timerText, { color: 'black'}]}>
             Calling in {timer}...
           </Text>
-          <Text style={[styles.cancelText, { color: 'black', fontFamily: 'Newsreader' }]}>
+          <Text style={[styles.cancelText, { color: 'black'}]}>
             Slide to Cancel
           </Text>
         </View>
@@ -104,11 +114,18 @@ export default function TabOneScreen() {
 }
 
 const styles = StyleSheet.create({
-  image: {
+  image1: {
     width: 200,
     height: 200,
     resizeMode: 'contain',
   },
+
+  image2: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -143,10 +160,12 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: 20,
     marginVertical: 10,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: 'NewsReader',
   },
   cancelText: {
     fontSize: 16,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: 'NewsReader',
   },
 });
