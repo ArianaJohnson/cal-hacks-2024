@@ -31,7 +31,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -52,7 +53,7 @@ export default function TabLayout() {
         name="user-information"
         options={{
           title: 'User Information',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="gears" color={color} />,
         }}
       />
     </Tabs>
